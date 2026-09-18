@@ -35,8 +35,10 @@ src="$(cd "$(dirname "$0")/.." && pwd)"
 package_path="$(printf '%s' "$package" | tr '.' '/')"
 
 echo "Generating $name (package $package) into $dest"
-mkdir -p "$dest"
-(cd "$src" && tar cf - --exclude './.git' --exclude './target' --exclude './node_modules' .) | (cd "$dest" && tar xf -)
+tmp="$(mktemp -d)"
+(cd "$src" && tar cf - --exclude './.git' --exclude './target' --exclude './node_modules' .) | (cd "$tmp" && tar xf -)
+mkdir -p "$(dirname "$dest")"
+mv "$tmp" "$dest"
 
 python3 - "$dest" "$name" "$package" "$package_path" <<'PY'
 import shutil
