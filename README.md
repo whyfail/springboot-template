@@ -1,6 +1,6 @@
 # springboot-template
 
-CWA 企业级 Spring Boot 后端模板。为 `vite_react_init`、`vite_vue3_init`、`vite_react_ssr_init`、`vite_vue3_ssr_init` 四套前端提供登录、Bearer Token 鉴权、用户与角色管理、安全审计、可观测性等基础能力。
+企业级 Spring Boot 后端模板。为 `vite_react_init`、`vite_vue3_init`、`vite_react_ssr_init`、`vite_vue3_ssr_init` 四套前端提供登录、Bearer Token 鉴权、用户与角色管理、安全审计、可观测性等基础能力。
 
 HTTP 契约：[`openapi.yaml`](./openapi.yaml)（OpenAPI 3.1）。数据模型基线：`src/main/resources/db/migration/V1__init_iam.sql`。
 
@@ -42,7 +42,7 @@ docker compose ps                    # 三个服务 healthy
 # 3. readiness 探针（独立管理端口 9090）
 curl --fail http://localhost:9091/actuator/health/readiness   # 宿主 9091 -> 容器 9090
 
-# 4. 首管理员已由 bootstrap 创建（compose 使用 local profile + CWA_BOOTSTRAP_ENABLED=true）
+# 4. 首管理员已由 bootstrap 创建（compose 使用 local profile + APP_BOOTSTRAP_ENABLED=true）
 curl -s http://localhost:8080/api/v1/login \
   -H 'Content-Type: application/json' \
   -d "{\"username\":\"admin\",\"password\":\"$(grep BOOTSTRAP_ADMIN_PASSWORD .env | cut -d= -f2)\"}"
@@ -68,10 +68,10 @@ curl -s http://localhost:8080/api/v1/login \
 | `DB_URL` / `DB_USERNAME` / `DB_PASSWORD` | MySQL 连接（必须含 `connectionTimeZone=UTC`） |
 | `REDIS_URL` | 例如 `redis://host:6379` |
 | `SERVER_PORT`（默认 8080）、`MANAGEMENT_PORT`（默认 9090） | 业务端口与管理端口分离 |
-| `CWA_BOOTSTRAP_ENABLED` | 默认 `false`；开启时必须同时提供下一项 |
-| `CWA_BOOTSTRAP_ADMIN_PASSWORD` | ≥12 字符；bootstrap 完成后关闭入口 |
+| `APP_BOOTSTRAP_ENABLED` | 默认 `false`；开启时必须同时提供下一项 |
+| `APP_BOOTSTRAP_ADMIN_PASSWORD` | ≥12 字符；bootstrap 完成后关闭入口 |
 | `OTLP_ENDPOINT` / `OTLP_EXPORT_ENABLED` | OTLP tracing 输出，默认关闭 |
-| `CWA_ALLOWED_ORIGINS` | 无此默认时使用 application.yml 的本地白名单；生产必须显式设置 |
+| `APP_ALLOWED_ORIGINS` | 无此默认时使用 application.yml 的本地白名单；生产必须显式设置 |
 
 `local` profile 为本地开发提供了连接默认值（见 `application-local.yml`）；生产 profile 无任何凭据默认值，缺失即启动失败。
 
@@ -91,7 +91,7 @@ docker compose down -v              # 停止并清空数据卷
 ## 与四套前端接入
 
 - **SPA（React/Vue）**：`VITE_API_BASE=/api/v1`、`VITE_API_TARGET=http://localhost:8080`；登录字段 `username/password/remember`，兼容旧字段 `name/checked`；取响应顶层 `token` 走 `Authorization: Bearer`。
-- **SSR（Next/Nuxt）**：BFF 调 `/api/v1/login`，把 `token` 写入 `cwa_token` HttpOnly Cookie（`SameSite=Lax`、生产加 `Secure`，`Max-Age` 不超过 `expiresAt`）；服务端读 Cookie 转 Bearer。
+- **SSR（Next/Nuxt）**：BFF 调 `/api/v1/login`，把 `token` 写入 `auth_token` HttpOnly Cookie（`SameSite=Lax`、生产加 `Secure`，`Max-Age` 不超过 `expiresAt`）；服务端读 Cookie 转 Bearer。
 
 完整示例（含 axios、Next.js Route Handler、Nuxt server/api 代码）见 [docs/frontend-integration.md](./docs/frontend-integration.md)。
 

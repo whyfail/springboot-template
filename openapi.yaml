@@ -1,10 +1,9 @@
 openapi: 3.1.0
 info:
-  title: CWA Spring Boot Enterprise API
+  title: Spring Boot Enterprise Template API
   version: 1.0.0
   description: |
-    CWA 四套前端模板共用的后端契约。规范登录字段为 username、password、remember；
-    为兼容已有模板，后端同时接受 name 作为 username 的别名、checked 作为 remember 的别名。
+    企业级 Spring Boot 后端模板的 HTTP 契约，规范登录字段为 username、password、remember。
 servers:
   - url: /
 tags:
@@ -28,8 +27,6 @@ paths:
             examples:
               canonical:
                 value: { username: admin, password: ChangeMe123!, remember: false }
-              cwaCompatibility:
-                value: { name: admin, password: ChangeMe123!, checked: true }
       responses:
         '200':
           description: 登录成功
@@ -297,22 +294,13 @@ components:
     LoginRequest:
       type: object
       additionalProperties: false
-      required: [password]
-      anyOf:
-        - required: [username]
-        - required: [name]
+      required: [username, password]
       properties:
         username:
           type: string
           minLength: 2
           maxLength: 64
-          description: 规范用户名字段
-        name:
-          type: string
-          minLength: 2
-          maxLength: 64
-          deprecated: true
-          description: CWA 兼容别名；与 username 不得同时传递不同值
+          description: 用户名
         password:
           type: string
           minLength: 8
@@ -321,10 +309,6 @@ components:
         remember:
           type: boolean
           default: false
-        checked:
-          type: boolean
-          deprecated: true
-          description: CWA 兼容别名；与 remember 不得同时传递不同值
     LoginResponse:
       type: object
       additionalProperties: false

@@ -7,7 +7,7 @@ spring:
       maximum-pool-size: 5
       minimum-idle: 1
 
-cwa:
+app:
   security:
     bcrypt-strength: 4
     swagger-ui-enabled: true

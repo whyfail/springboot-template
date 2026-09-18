@@ -15,7 +15,7 @@ FROM eclipse-temurin:25-jre AS runtime
 RUN apt-get update \
     && apt-get install -y --no-install-recommends curl \
     && rm -rf /var/lib/apt/lists/* \
-    && useradd --system --uid 10001 --home-dir /app --shell /usr/sbin/nologin cwa
+    && useradd --system --uid 10001 --home-dir /app --shell /usr/sbin/nologin app
 WORKDIR /app
 COPY --from=build /build/target/springboot-template-*.jar /app/app.jar
 USER 10001

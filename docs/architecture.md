@@ -26,7 +26,7 @@ Spring Boot 4.1.1 模块化单体。代码按业务域组织，每个域内保�
 ## 包结构与依赖方向
 
 ```
-com.wl.cwa
+com.example.app
 ├── auth             认证域：登录、Bearer 过滤器、Security 配置、SecurityFilterChain
 │   ├── api          AuthController + LoginRequest/LoginResponse/CurrentUserResponse
 │   ├── application  AuthService、TokenService、PasswordHashBenchmark、command
@@ -39,7 +39,7 @@ com.wl.cwa
 ├── audit            审计域（叶子）：AuditEventEntity、AuditRecorder
 └── shared           跨域基础设施
     ├── api          RequestIdFilter、RequestLogFilter、PageResponse、PageRequestFactory
-    ├── config       CwaSecurityProperties、CwaBootstrapProperties、Clock
+    ├── config       SecurityProperties、BootstrapProperties、Clock
     ├── error        ErrorCode、BusinessException、RateLimitedException、ProblemDetailFactory、GlobalExceptionHandler
     └── security     SessionData、SessionStore、RedisSessionStore、LoginRateLimiter、TokenGenerator、Hashes、AuthenticatedUser
 ```
@@ -54,7 +54,7 @@ com.wl.cwa
 ## 认证与会话
 
 1. `POST /api/v1/login`：`LoginRateLimiter`（IP + 账号，Lua 原子计数）→ 查库 → `PasswordEncoder` 校验（未知用户用 dummy 哈希均衡时延）→ 加载角色/权限 → 生成 256-bit token → **数据库事务提交后**写 Redis 会话 → 审计 `LOGIN_SUCCESS/FAILURE`。
-2. Redis 键：`cwa:session:{sha256(token)}`（会话 JSON，TTL=8h/30d）、`cwa:user-sessions:{userId}`（ZSET，按创建时间排序，上限 5 个，Lua 原子驱逐最旧）、`cwa:login-rate:{kind}:{sha256(subject)}:{bucket}`。
+2. Redis 键：`app:session:{sha256(token)}`（会话 JSON，TTL=8h/30d）、`app:user-sessions:{userId}`（ZSET，按创建时间排序，上限 5 个，Lua 原子驱逐最旧）、`app:login-rate:{kind}:{sha256(subject)}:{bucket}`。
 3. `BearerTokenAuthenticationFilter`：解析 Bearer → 摘要 → 读会话 → 构造 `AuthenticatedUser` principal。Redis 故障 → 503 `SESSION_STORE_UNAVAILABLE`（失败关闭）。
 4. 权限敏感变更（改角色、禁用）撤销该用户全部会话。
 5. `POST /api/v1/logout` 幂等：重复调用同 token 仍返回 204。
@@ -71,7 +71,7 @@ com.wl.cwa
 
 - 结构化 JSON 日志（Boot 内置 logstash 格式），MDC：`requestId/traceId/spanId/service/environment`；`RequestLogFilter` 输出 `event=http_access`，`pathTemplate` 永远是路由模板。
 - 每个请求必有 `X-Request-ID`（合法入参回显，否则生成 UUID）。
-- Micrometer：HTTP/JVM/连接池 + 自定义 `cwa.auth.login{result}`；Prometheus 暴露于管理端口。
+- Micrometer：HTTP/JVM/连接池 + 自定义 `app.auth.login{result}`；Prometheus 暴露于管理端口。
 - Micrometer Tracing（OTel bridge）+ OTLP 导出开关，默认关闭。
 
 ## 测试分层

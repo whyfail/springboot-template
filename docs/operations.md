@@ -38,23 +38,23 @@ livenessProbe:
 
 可选：`DB_POOL_MAX`（默认 20）、`DB_POOL_MIN`（5）、`SERVER_PORT`、`MANAGEMENT_PORT`、`OTLP_ENDPOINT`、`OTLP_EXPORT_ENABLED`（默认 false）、`TRACING_ENABLED`。
 
-安全相关（`cwa.security.*`）：`session-ttl=8h`、`remembered-session-ttl=30d`、`max-sessions-per-user=5`、`bcrypt-strength=12`、`login-attempts-per-minute=5`、`login-attempts-per-hour=20`、`allowed-origins`（生产必须显式设置，不得通配）。
+安全相关（`app.security.*`）：`session-ttl=8h`、`remembered-session-ttl=30d`、`max-sessions-per-user=5`、`bcrypt-strength=12`、`login-attempts-per-minute=5`、`login-attempts-per-hour=20`、`allowed-origins`（生产必须显式设置，不得通配）。
 
 ## 首管理员 bootstrap
 
 迁移不创建任何管理员。创建首管理员：
 
 ```bash
-CWA_BOOTSTRAP_ENABLED=true \
-CWA_BOOTSTRAP_ADMIN_USERNAME=admin \
-CWA_BOOTSTRAP_ADMIN_PASSWORD='<≥12字符>' \
+APP_BOOTSTRAP_ENABLED=true \
+APP_BOOTSTRAP_ADMIN_USERNAME=admin \
+APP_BOOTSTRAP_ADMIN_PASSWORD='<≥12字符>' \
 java -jar app.jar
 ```
 
 - 密码缺失或 <12 字符 → 启动失败（显式报错，不降级）。
 - 用户名已存在 → 跳过（幂等）。
 - 创建内容：`ADMIN` 系统角色 + 全部权限 + 管理员用户 + `ADMIN_BOOTSTRAPPED` 审计。
-- **完成后关闭入口**：移除 `CWA_BOOTSTRAP_ENABLED=true`，重启后该代码路径不再激活。
+- **完成后关闭入口**：移除 `APP_BOOTSTRAP_ENABLED=true`，重启后该代码路径不再激活。
 
 ## 日志
 
@@ -66,7 +66,7 @@ java -jar app.jar
 
 ## 指标与追踪
 
-- Prometheus：`GET :9090/actuator/prometheus`。业务指标 `cwa.auth.login{result=success|failure|rate_limited|session_store_error}`（无用户维度标签）。
+- Prometheus：`GET :9090/actuator/prometheus`。业务指标 `app.auth.login{result=success|failure|rate_limited|session_store_error}`（无用户维度标签）。
 - Tracing：`TRACING_ENABLED=true` + `OTLP_ENDPOINT=http://otel-collector:4318` + `OTLP_EXPORT_ENABLED=true`。业务代码只使用 Micrometer Observation，不直接依赖 OTel API。
 
 ## 限流

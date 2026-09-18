@@ -9,7 +9,7 @@ spring:
       maximum-pool-size: ${DB_POOL_MAX:20}
       minimum-idle: ${DB_POOL_MIN:5}
       connection-timeout: 3000
-      pool-name: cwa-hikari
+      pool-name: app-hikari
   jpa:
     open-in-view: false
     hibernate:
@@ -66,7 +66,7 @@ logging:
   level:
     root: INFO
 
-cwa:
+app:
   security:
     session-ttl: 8h
     remembered-session-ttl: 30d
@@ -74,11 +74,11 @@ cwa:
     bcrypt-strength: 12
     login-attempts-per-minute: 5
     login-attempts-per-hour: 20
-    allowed-origins: http://localhost:5173,http://localhost:3000
+    allowed-origins: ${APP_ALLOWED_ORIGINS:http://localhost:5173,http://localhost:3000}
     problem-type-base-url: https://docs.example.com/problems
     swagger-ui-enabled: false
   bootstrap:
-    enabled: ${CWA_BOOTSTRAP_ENABLED:false}
-    username: ${CWA_BOOTSTRAP_ADMIN_USERNAME:admin}
-    display-name: ${CWA_BOOTSTRAP_ADMIN_DISPLAY_NAME:Administrator}
-    password: ${CWA_BOOTSTRAP_ADMIN_PASSWORD:}
+    enabled: ${APP_BOOTSTRAP_ENABLED:false}
+    username: ${APP_BOOTSTRAP_ADMIN_USERNAME:admin}
+    display-name: ${APP_BOOTSTRAP_ADMIN_DISPLAY_NAME:Administrator}
+    password: ${APP_BOOTSTRAP_ADMIN_PASSWORD:}

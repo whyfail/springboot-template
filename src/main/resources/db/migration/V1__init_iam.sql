@@ -1,4 +1,4 @@
--- CWA Spring Boot enterprise template initial IAM schema (MySQL 8.4).
+-- Spring Boot enterprise template initial IAM schema (MySQL 8.4).
 -- Derived from the design baseline 04-schema.sql. App connections run in UTC.
 -- Raw passwords and raw session tokens are never stored in the database.
 
@@ -125,7 +125,7 @@ CREATE TABLE audit_event (
   COMMENT='安全与管理操作审计';
 
 -- Permission seed data. Roles, the ADMIN role and the first administrator are created by the
--- explicit bootstrap entry (cwa.bootstrap.enabled + CWA_BOOTSTRAP_ADMIN_PASSWORD), never by a
+-- explicit bootstrap entry (app.bootstrap.enabled + APP_BOOTSTRAP_ADMIN_PASSWORD), never by a
 -- migration with a default password.
 INSERT INTO iam_permission (code, name, description, created_at) VALUES
     ('user:read', '读取用户', '查看用户列表与详情', UTC_TIMESTAMP(6)),
@@ -134,6 +134,6 @@ INSERT INTO iam_permission (code, name, description, created_at) VALUES
     ('audit:read', '读取审计', '查看安全和管理操作审计', UTC_TIMESTAMP(6));
 
 -- Redis session key contract (informational, not SQL):
---   cwa:session:{sha256(token)}    -> session JSON, TTL equals session expiry
---   cwa:user-sessions:{userId}     -> ZSET of token digests scored by creation time
---   cwa:login-rate:{kind}:{hash}:{window} -> atomic rate-limit counters
+--   app:session:{sha256(token)}    -> session JSON, TTL equals session expiry
+--   app:user-sessions:{userId}     -> ZSET of token digests scored by creation time
+--   app:login-rate:{kind}:{hash}:{window} -> atomic rate-limit counters

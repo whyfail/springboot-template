@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
   const { token, expiresAt } = await upstream.json();
   const maxAge = Math.max(0, Math.floor((Date.parse(expiresAt) - Date.now()) / 1000)); // 不超过 expiresAt
   const res = NextResponse.json({ ok: true });
-  res.cookies.set('cwa_token', token, {
+  res.cookies.set('auth_token', token, {
     httpOnly: true,
     sameSite: 'lax',
     path: '/',
@@ -76,7 +76,7 @@ SSR 服务端请求转发（RSC / Route Handler）：
 import { cookies } from 'next/headers';
 
 async function backendFetch(path: string, init?: RequestInit) {
-  const token = (await cookies()).get('cwa_token')?.value;
+  const token = (await cookies()).get('auth_token')?.value;
   return fetch(`${process.env.BACKEND_API_BASE_URL}${path}`, {
     ...init,
     headers: { ...init?.headers, Authorization: `Bearer ${token ?? ''}` },
@@ -110,7 +110,7 @@ export default defineEventHandler(async (event) => {
 
   const { token, expiresAt } = upstream._data;
   const maxAge = Math.max(0, Math.floor((Date.parse(expiresAt) - Date.now()) / 1000));
-  setCookie(event, 'cwa_token', token, {
+  setCookie(event, 'auth_token', token, {
     httpOnly: true,
     sameSite: 'lax',
     path: '/',
@@ -123,7 +123,7 @@ export default defineEventHandler(async (event) => {
 
 ```ts
 // 服务端转发
-const token = getCookie(event, 'cwa_token');
+const token = getCookie(event, 'auth_token');
 await $fetch(`${config.backendApiBaseUrl}/me`, { headers: { Authorization: `Bearer ${token ?? ''}` } });
 ```
 
@@ -133,7 +133,7 @@ await $fetch(`${config.backendApiBaseUrl}/me`, { headers: { Authorization: `Bear
 
 | 属性 | 值 |
 | --- | --- |
-| 名称 | `cwa_token` |
+| 名称 | `auth_token` |
 | HttpOnly | 必须 |
 | SameSite | `Lax` |
 | Path | `/` |

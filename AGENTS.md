@@ -21,7 +21,7 @@
 
 - 原始密码、Token、密钥禁止写入日志、审计 details、异常消息、指标标签或任何示例配置。
 - Redis 只保存 Token 的 SHA-256 摘要；数据库只保存密码哈希（`{bcrypt}...`）。
-- 禁止硬编码默认管理员密码；首位管理员只能通过 `cwa.bootstrap.enabled=true` + `CWA_BOOTSTRAP_ADMIN_PASSWORD` 显式创建。
+- 禁止硬编码默认管理员密码；首位管理员只能通过 `app.bootstrap.enabled=true` + `APP_BOOTSTRAP_ADMIN_PASSWORD` 显式创建。
 - 生产配置禁止给数据库密码、管理账号密码提供默认值，禁止 CORS 通配符。
 - 登录失败提示统一为「账号或密码错误」，避免账号枚举。
 - 修改 Cookie 鉴权方案前必须重新评估 CSRF（当前 Bearer API 无 Cookie，CSRF 关闭）。

@@ -11,11 +11,11 @@
         <relativePath/>
     </parent>
 
-    <groupId>com.wl.cwa</groupId>
+    <groupId>com.example.app</groupId>
     <artifactId>springboot-template</artifactId>
     <version>0.1.0-SNAPSHOT</version>
     <name>springboot-template</name>
-    <description>CWA enterprise Spring Boot backend template compatible with the four CWA frontend starters</description>
+    <description>Enterprise Spring Boot backend template compatible with the four frontend starters</description>
 
     <properties>
         <java.version>25</java.version>
@@ -268,9 +268,9 @@
                                 <rule>
                                     <element>PACKAGE</element>
                                     <includes>
-                                        <include>com.wl.cwa.auth.*</include>
-                                        <include>com.wl.cwa.user.*</include>
-                                        <include>com.wl.cwa.authorization.*</include>
+                                        <include>com.example.app.auth.*</include>
+                                        <include>com.example.app.user.*</include>
+                                        <include>com.example.app.authorization.*</include>
                                     </includes>
                                     <limits>
                                         <limit>
@@ -283,7 +283,7 @@
                                 <rule>
                                     <element>PACKAGE</element>
                                     <includes>
-                                        <include>com.wl.cwa.auth.application</include>
+                                        <include>com.example.app.auth.application</include>
                                     </includes>
                                     <limits>
                                         <limit>
@@ -299,7 +299,7 @@
                 </executions>
                 <configuration>
                     <excludes>
-                        <exclude>com/wl/cwa/CwaApplication.class</exclude>
+                        <exclude>com/example/app/Application.class</exclude>
                         <exclude>**/*Properties.class</exclude>
                         <exclude>**/*Config.class</exclude>
                         <exclude>**/*Configuration.class</exclude>
