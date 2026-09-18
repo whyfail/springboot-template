@@ -22,3 +22,6 @@ logs/
 
 # Coverage reports
 site/
+
+# Local generation output
+/generated/
