@@ -49,13 +49,13 @@ jobs:
           cache: maven
 
       - name: Build OCI image (multi-stage, cached Maven repo)
-        run: docker build -t cwa-backend:${{ github.sha }} .
+        run: docker build -t springboot-template:${{ github.sha }} .
 
       - name: Generate SBOM
         uses: anchore/sbom-action@v0
         with:
-          image: cwa-backend:${{ github.sha }}
+          image: springboot-template:${{ github.sha }}
           format: spdx-json
-          artifact-name: cwa-backend-sbom.spdx.json
+          artifact-name: springboot-template-sbom.spdx.json
 
       # 依赖与镜像漏洞扫描阈值由团队策略确定后接入（如 trivy/grype）。

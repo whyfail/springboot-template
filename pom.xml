@@ -12,9 +12,9 @@
     </parent>
 
     <groupId>com.wl.cwa</groupId>
-    <artifactId>cwa-springboot-enterprise-template</artifactId>
+    <artifactId>springboot-template</artifactId>
     <version>0.1.0-SNAPSHOT</version>
-    <name>cwa-springboot-enterprise-template</name>
+    <name>springboot-template</name>
     <description>CWA enterprise Spring Boot backend template compatible with the four CWA frontend starters</description>
 
     <properties>

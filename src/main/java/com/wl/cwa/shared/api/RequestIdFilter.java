@@ -35,10 +35,12 @@ public class RequestIdFilter extends OncePerRequestFilter {
             REQUEST_ID_MDC_KEY, SERVICE_MDC_KEY, ENVIRONMENT_MDC_KEY);
 
     private final String environment;
+    private final String service;
 
     public RequestIdFilter(Environment environment) {
         this.environment = String.join(
                 ",", environment.getActiveProfiles().length > 0 ? List.of(environment.getActiveProfiles()) : List.of("default"));
+        this.service = environment.getProperty("spring.application.name", "springboot-template");
     }
 
     @Override
@@ -49,7 +51,7 @@ public class RequestIdFilter extends OncePerRequestFilter {
         request.setAttribute(REQUEST_ID_ATTRIBUTE, requestId);
         response.setHeader(REQUEST_ID_HEADER, requestId);
         MDC.put(REQUEST_ID_MDC_KEY, requestId);
-        MDC.put(SERVICE_MDC_KEY, "cwa-backend");
+        MDC.put(SERVICE_MDC_KEY, service);
         MDC.put(ENVIRONMENT_MDC_KEY, environment);
         try {
             filterChain.doFilter(request, response);

@@ -1,4 +1,4 @@
-# cwa-springboot-enterprise-template
+# springboot-template
 
 CWA 企业级 Spring Boot 后端模板。为 `vite_react_init`、`vite_vue3_init`、`vite_react_ssr_init`、`vite_vue3_ssr_init` 四套前端提供登录、Bearer Token 鉴权、用户与角色管理、安全审计、可观测性等基础能力。
 
@@ -29,7 +29,7 @@ HTTP 契约：[`openapi.yaml`](./openapi.yaml)（OpenAPI 3.1）。数据模型�
 ## 10 分钟本地启动
 
 ```bash
-git clone <repo> && cd cwa-springboot-enterprise-template
+git clone <repo> && cd springboot-template
 
 # 1. 准备环境变量（会强制要求填写三个密码，无默认值）
 cp .env.example .env
