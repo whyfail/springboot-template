@@ -1,6 +1,6 @@
 spring:
   application:
-    name: springboot-template
+    name: {{ name }}
   datasource:
     url: ${DB_URL}
     username: ${DB_USERNAME}

@@ -17,7 +17,7 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/* \
     && useradd --system --uid 10001 --home-dir /app --shell /usr/sbin/nologin app
 WORKDIR /app
-COPY --from=build /build/target/springboot-template-*.jar /app/app.jar
+COPY --from=build /build/target/{{ name }}-*.jar /app/app.jar
 USER 10001
 EXPOSE 8080 9090
 # JVM tuning arrives via JAVA_TOOL_OPTIONS (e.g. -XX:MaxRAMPercentage=75 in compose/k8s).

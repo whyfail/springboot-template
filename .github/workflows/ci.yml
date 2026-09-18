@@ -1,5 +1,9 @@
 name: ci
 
+# The repository is a TEMPLATE source: sources contain {{ package }}/{{ name }}
+# placeholders and are not directly compilable. CI generates a project first,
+# then runs the full quality gate against the generated output.
+
 on:
   push:
     branches: [main]
@@ -7,7 +11,7 @@ on:
 
 jobs:
   verify:
-    name: Build, test, verify
+    name: Generate, test, verify
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -19,18 +23,24 @@ jobs:
           java-version: '25'
           cache: maven
 
-      - name: Spotless format check
-        run: ./mvnw -B -ntp spotless:check
+      - name: Generate a project from the template
+        run: |
+          ./scripts/generate.sh \
+            -n springboot-template \
+            -p com.example.app \
+            -d "$RUNNER_TEMP/generated"
 
-      - name: Full verify (unit + Testcontainers integration + coverage + ArchUnit)
-        run: ./mvnw -B -ntp clean verify
+      - name: Full verify on the generated project (unit + Testcontainers + coverage + ArchUnit)
+        run: |
+          cd "$RUNNER_TEMP/generated"
+          ./mvnw -B -ntp clean verify
 
       - name: Upload coverage report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: jacoco-report
-          path: target/site/jacoco
+          path: "$RUNNER_TEMP/generated/target/site/jacoco"
           if-no-files-found: ignore
 
   image:
@@ -48,7 +58,15 @@ jobs:
           java-version: '25'
           cache: maven
 
+      - name: Generate a project from the template
+        run: |
+          ./scripts/generate.sh \
+            -n springboot-template \
+            -p com.example.app \
+            -d "$RUNNER_TEMP/generated"
+
       - name: Build OCI image (multi-stage, cached Maven repo)
+        working-directory: "$RUNNER_TEMP/generated"
         run: docker build -t springboot-template:${{ github.sha }} .
 
       - name: Generate SBOM

@@ -11,10 +11,10 @@
         <relativePath/>
     </parent>
 
-    <groupId>com.example.app</groupId>
-    <artifactId>springboot-template</artifactId>
+    <groupId>{{ package }}</groupId>
+    <artifactId>{{ name }}</artifactId>
     <version>0.1.0-SNAPSHOT</version>
-    <name>springboot-template</name>
+    <name>{{ name }}</name>
     <description>Enterprise Spring Boot backend template compatible with the four frontend starters</description>
 
     <properties>
@@ -268,9 +268,9 @@
                                 <rule>
                                     <element>PACKAGE</element>
                                     <includes>
-                                        <include>com.example.app.auth.*</include>
-                                        <include>com.example.app.user.*</include>
-                                        <include>com.example.app.authorization.*</include>
+                                        <include>{{ package }}.auth.*</include>
+                                        <include>{{ package }}.user.*</include>
+                                        <include>{{ package }}.authorization.*</include>
                                     </includes>
                                     <limits>
                                         <limit>
@@ -283,7 +283,7 @@
                                 <rule>
                                     <element>PACKAGE</element>
                                     <includes>
-                                        <include>com.example.app.auth.application</include>
+                                        <include>{{ package }}.auth.application</include>
                                     </includes>
                                     <limits>
                                         <limit>
@@ -299,7 +299,7 @@
                 </executions>
                 <configuration>
                     <excludes>
-                        <exclude>com/example/app/Application.class</exclude>
+                        <exclude>{{ packagePath }}/Application.class</exclude>
                         <exclude>**/*Properties.class</exclude>
                         <exclude>**/*Config.class</exclude>
                         <exclude>**/*Configuration.class</exclude>

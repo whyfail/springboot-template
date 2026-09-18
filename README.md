@@ -1,8 +1,62 @@
-# springboot-template
+<div align="center">
+  <h1>✨ Spring Boot 企业级后端模板 ✨</h1>
 
-企业级 Spring Boot 后端模板。为 `vite_react_init`、`vite_vue3_init`、`vite_react_ssr_init`、`vite_vue3_ssr_init` 四套前端提供登录、Bearer Token 鉴权、用户与角色管理、安全审计、可观测性等基础能力。
+  <p>
+    🚀 为 AI 而生的企业级 Spring Boot 后端模板<br>
+    📦 模块化单体、opaque token 会话、限流审计，开箱即用<br>
+    🔧 契约先行、Testcontainers 真实依赖测试、可验证质量门禁
+  </p>
+
+  <div>
+    <a href="https://spring.io/projects/spring-boot" target="_blank">
+      <img src="https://img.shields.io/badge/Spring_Boot_4.1-6DB33F?style=for-the-badge&logo=springboot&logoColor=white" alt="Spring Boot" />
+    </a>
+    <a href="https://openjdk.org/" target="_blank">
+      <img src="https://img.shields.io/badge/Java_25-437291?style=for-the-badge&logo=openjdk&logoColor=white" alt="Java 25" />
+    </a>
+    <a href="https://www.mysql.com/" target="_blank">
+      <img src="https://img.shields.io/badge/MySQL_8.4-4479A1?style=for-the-badge&logo=mysql&logoColor=white" alt="MySQL" />
+    </a>
+    <a href="https://redis.io/" target="_blank">
+      <img src="https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white" alt="Redis" />
+    </a>
+    <a href="https://testcontainers.com/" target="_blank">
+      <img src="https://img.shields.io/badge/Testcontainers-24B374?style=for-the-badge&logo=testcontainersorg&logoColor=white" alt="Testcontainers" />
+    </a>
+    <a href="https://maven.apache.org/" target="_blank">
+      <img src="https://img.shields.io/badge/Maven-C71A36?style=for-the-badge&logo=apachemaven&logoColor=white" alt="Maven" />
+    </a>
+  </div>
+
+---
+
+</div>
+
+一个专为 AI 协作编码设计的企业级 Spring Boot 后端模板。模板通过 `AGENTS.md`、`auth/user/authorization/audit/shared` 业务域分层、opaque token 会话和可验证质量门禁，把架构边界、安全约定和测试策略明确写进项目本身，为 `vite_react_init`、`vite_vue3_init`、`vite_react_ssr_init`、`vite_vue3_ssr_init` 四套前端提供登录、鉴权、用户角色管理与可观测性基础能力。
+
+> ⚠️ **本仓库是模板源码**：Java 包名与项目名使用 `{{ package }}` / `{{ name }}` 占位符（与前端模板的 `{{ name }}` 一致），**不能直接编译**。请先通过 [create-wl-app](https://www.npmjs.com/package/create-wl-app) 或 [`scripts/generate.sh`](scripts/generate.sh) 生成自己的项目，生成后即为可运行的完整工程。
 
 HTTP 契约：[`openapi.yaml`](./openapi.yaml)（OpenAPI 3.1）。数据模型基线：`src/main/resources/db/migration/V1__init_iam.sql`。
+
+## 生成项目
+
+**方式一：create-wl-app（推荐，与前端模板同一入口）**
+
+```bash
+# 管道符一行生成：模板名\n项目名\nJava包名\n项目描述（可选）
+echo -e "spring-boot\nmy-backend\ncom.mycompany.mybackend\n我的后端服务" | npx create-wl-app create
+```
+
+**方式二：本仓库自带的生成脚本**
+
+```bash
+git clone https://github.com/whyfail/springboot-template.git
+cd springboot-template
+./scripts/generate.sh -n my-backend -p com.mycompany.mybackend -d ../my-backend
+cd ../my-backend
+```
+
+生成的项目里，`{{ package }}` / `{{ name }}` 已被替换为你的 Java 包名与项目名，直接按下面步骤启动。
 
 ## 技术基线
 
@@ -26,10 +80,9 @@ HTTP 契约：[`openapi.yaml`](./openapi.yaml)（OpenAPI 3.1）。数据模型�
 - JDK 25、Docker（Testcontainers 集成测试需要）。
 - 本地启动：Docker（或 colima）。
 
-## 10 分钟本地启动
+## 10 分钟本地启动（在生成的项目里）
 
 ```bash
-git clone <repo> && cd springboot-template
 
 # 1. 准备环境变量（会强制要求填写三个密码，无默认值）
 cp .env.example .env
