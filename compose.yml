@@ -1,0 +1,78 @@
+name: cwa-backend
+
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: cwa-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?MYSQL_ROOT_PASSWORD is required (see .env.example)}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-cwa}
+      MYSQL_USER: cwa
+      MYSQL_PASSWORD: ${MYSQL_APP_PASSWORD:?MYSQL_APP_PASSWORD is required (see .env.example)}
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_0900_ai_ci
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-p$$MYSQL_ROOT_PASSWORD"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+      start_period: 30s
+
+  redis:
+    image: redis:8-alpine
+    container_name: cwa-redis
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: cwa-backend:local
+    container_name: cwa-app
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: local
+      SERVER_PORT: "8080"
+      MANAGEMENT_PORT: "9090"
+      DB_URL: jdbc:mysql://mysql:3306/cwa?connectionTimeZone=UTC&forceConnectionTimeZoneToSession=true
+      DB_USERNAME: cwa
+      DB_PASSWORD: ${MYSQL_APP_PASSWORD:?MYSQL_APP_PASSWORD is required (see .env.example)}
+      REDIS_URL: redis://redis:6379
+      CWA_BOOTSTRAP_ENABLED: "true"
+      CWA_BOOTSTRAP_ADMIN_PASSWORD: ${BOOTSTRAP_ADMIN_PASSWORD:?BOOTSTRAP_ADMIN_PASSWORD is required (see .env.example)}
+      JAVA_TOOL_OPTIONS: -XX:MaxRAMPercentage=75
+    ports:
+      - "8080:8080"
+      # Host 9090 is a common conflict zone (local proxies etc.); map management to 9091 locally.
+      - "9091:9090"
+    read_only: true
+    tmpfs:
+      - /tmp
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:9090/actuator/health/readiness"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 60s
+
+volumes:
+  mysql-data:
+  redis-data:

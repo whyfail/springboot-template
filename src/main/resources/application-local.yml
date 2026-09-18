@@ -1,0 +1,16 @@
+# Local profile: connects to the Compose stack by default. A local database password default is
+# acceptable for developer machines; production profiles never carry default credentials.
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:mysql://localhost:3306/cwa?connectionTimeZone=UTC&forceConnectionTimeZoneToSession=true}
+    username: ${DB_USERNAME:cwa}
+    password: ${DB_PASSWORD:cwa-local-dev-password}
+  data:
+    redis:
+      url: ${REDIS_URL:redis://localhost:6379}
+
+cwa:
+  security:
+    swagger-ui-enabled: true
+  bootstrap:
+    enabled: ${CWA_BOOTSTRAP_ENABLED:true}

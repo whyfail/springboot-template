@@ -1,0 +1,15 @@
+# Test profile: datasource and Redis locations are injected by Testcontainers at runtime.
+spring:
+  jpa:
+    defer-datasource-initialization: false
+  datasource:
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 1
+
+cwa:
+  security:
+    bcrypt-strength: 4
+    swagger-ui-enabled: true
+  bootstrap:
+    enabled: false

@@ -1,0 +1,460 @@
+openapi: 3.1.0
+info:
+  title: CWA Spring Boot Enterprise API
+  version: 1.0.0
+  description: |
+    CWA 四套前端模板共用的后端契约。规范登录字段为 username、password、remember；
+    为兼容已有模板，后端同时接受 name 作为 username 的别名、checked 作为 remember 的别名。
+servers:
+  - url: /
+tags:
+  - name: Auth
+    description: 登录、当前用户与会话管理
+  - name: Users
+    description: 企业用户与角色管理
+paths:
+  /api/v1/login:
+    post:
+      tags: [Auth]
+      operationId: login
+      summary: 登录并创建会话
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+            examples:
+              canonical:
+                value: { username: admin, password: ChangeMe123!, remember: false }
+              cwaCompatibility:
+                value: { name: admin, password: ChangeMe123!, checked: true }
+      responses:
+        '200':
+          description: 登录成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+  /api/v1/logout:
+    post:
+      tags: [Auth]
+      operationId: logout
+      summary: 撤销当前会话
+      responses:
+        '204':
+          description: 会话已撤销；重复注销同样返回成功
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /api/v1/me:
+    get:
+      tags: [Auth]
+      operationId: getCurrentUser
+      summary: 获取当前登录用户
+      responses:
+        '200':
+          description: 当前用户
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CurrentUser'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /api/v1/users:
+    get:
+      tags: [Users]
+      operationId: listUsers
+      summary: 分页查询用户
+      parameters:
+        - $ref: '#/components/parameters/Keyword'
+        - $ref: '#/components/parameters/Enabled'
+        - $ref: '#/components/parameters/Role'
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Size'
+        - $ref: '#/components/parameters/Sort'
+      responses:
+        '200':
+          description: 用户分页
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserPage'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+    post:
+      tags: [Users]
+      operationId: createUser
+      summary: 创建用户
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserRequest'
+      responses:
+        '201':
+          description: 创建成功
+          headers:
+            Location:
+              description: 新用户资源地址
+              schema: { type: string }
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDetail'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '409':
+          $ref: '#/components/responses/Conflict'
+  /api/v1/users/{publicId}:
+    parameters:
+      - $ref: '#/components/parameters/PublicId'
+    get:
+      tags: [Users]
+      operationId: getUser
+      summary: 获取用户详情
+      responses:
+        '200':
+          description: 用户详情
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDetail'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      tags: [Users]
+      operationId: updateUser
+      summary: 更新用户资料
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserRequest'
+      responses:
+        '200':
+          description: 更新后的用户
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDetail'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+  /api/v1/users/{publicId}/roles:
+    put:
+      tags: [Users]
+      operationId: replaceUserRoles
+      summary: 替换用户角色
+      parameters:
+        - $ref: '#/components/parameters/PublicId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReplaceRolesRequest'
+      responses:
+        '200':
+          description: 更新后的用户
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDetail'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /api/v1/users/{publicId}/enabled:
+    put:
+      tags: [Users]
+      operationId: setUserEnabled
+      summary: 启用或禁用用户
+      parameters:
+        - $ref: '#/components/parameters/PublicId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SetEnabledRequest'
+      responses:
+        '200':
+          description: 更新后的用户
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDetail'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: Opaque
+  parameters:
+    PublicId:
+      name: publicId
+      in: path
+      required: true
+      schema: { type: string, format: uuid }
+    Keyword:
+      name: keyword
+      in: query
+      schema: { type: string, maxLength: 100 }
+    Enabled:
+      name: enabled
+      in: query
+      schema: { type: boolean }
+    Role:
+      name: role
+      in: query
+      schema: { type: string, pattern: '^[A-Z][A-Z0-9_]{1,63}$' }
+    Page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 0, default: 0 }
+    Size:
+      name: size
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 100, default: 20 }
+    Sort:
+      name: sort
+      in: query
+      description: 允许值由服务端白名单控制，例如 createdAt,desc
+      schema: { type: string, default: 'createdAt,desc' }
+  responses:
+    BadRequest:
+      description: 请求格式或字段校验失败
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+    Unauthorized:
+      description: 未登录或凭据无效
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+    Forbidden:
+      description: 权限不足
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+    NotFound:
+      description: 资源不存在
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+    Conflict:
+      description: 唯一键或业务状态冲突
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+    TooManyRequests:
+      description: 请求超过限流阈值
+      headers:
+        Retry-After:
+          schema: { type: integer, minimum: 1 }
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+  schemas:
+    LoginRequest:
+      type: object
+      additionalProperties: false
+      required: [password]
+      anyOf:
+        - required: [username]
+        - required: [name]
+      properties:
+        username:
+          type: string
+          minLength: 2
+          maxLength: 64
+          description: 规范用户名字段
+        name:
+          type: string
+          minLength: 2
+          maxLength: 64
+          deprecated: true
+          description: CWA 兼容别名；与 username 不得同时传递不同值
+        password:
+          type: string
+          minLength: 8
+          maxLength: 128
+          format: password
+        remember:
+          type: boolean
+          default: false
+        checked:
+          type: boolean
+          deprecated: true
+          description: CWA 兼容别名；与 remember 不得同时传递不同值
+    LoginResponse:
+      type: object
+      additionalProperties: false
+      required: [token, tokenType, expiresAt, user]
+      properties:
+        token: { type: string, minLength: 43 }
+        tokenType: { type: string, const: Bearer }
+        expiresAt: { type: string, format: date-time }
+        user: { $ref: '#/components/schemas/CurrentUser' }
+    CurrentUser:
+      type: object
+      additionalProperties: false
+      required: [publicId, username, displayName, enabled, roles, permissions]
+      properties:
+        publicId: { type: string, format: uuid }
+        username: { type: string }
+        displayName: { type: string }
+        avatarUrl: { type: [string, 'null'], format: uri }
+        enabled: { type: boolean }
+        roles:
+          type: array
+          uniqueItems: true
+          items: { type: string }
+        permissions:
+          type: array
+          uniqueItems: true
+          items: { type: string }
+    UserSummary:
+      type: object
+      additionalProperties: false
+      required: [publicId, username, displayName, enabled, roles, createdAt, updatedAt]
+      properties:
+        publicId: { type: string, format: uuid }
+        username: { type: string }
+        email: { type: [string, 'null'], format: email }
+        displayName: { type: string }
+        enabled: { type: boolean }
+        roles:
+          type: array
+          uniqueItems: true
+          items: { type: string }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+    UserDetail:
+      allOf:
+        - $ref: '#/components/schemas/UserSummary'
+        - type: object
+          required: [version]
+          properties:
+            avatarUrl: { type: [string, 'null'], format: uri }
+            lastLoginAt: { type: [string, 'null'], format: date-time }
+            version: { type: integer, format: int64, minimum: 0 }
+    UserPage:
+      type: object
+      additionalProperties: false
+      required: [items, page, size, totalElements, totalPages]
+      properties:
+        items:
+          type: array
+          items: { $ref: '#/components/schemas/UserSummary' }
+        page: { type: integer, minimum: 0 }
+        size: { type: integer, minimum: 1, maximum: 100 }
+        totalElements: { type: integer, format: int64, minimum: 0 }
+        totalPages: { type: integer, minimum: 0 }
+    CreateUserRequest:
+      type: object
+      additionalProperties: false
+      required: [username, password, displayName]
+      properties:
+        username: { type: string, minLength: 2, maxLength: 64, pattern: '^[A-Za-z0-9._-]+$' }
+        password: { type: string, minLength: 12, maxLength: 128, format: password }
+        email: { type: [string, 'null'], format: email, maxLength: 254 }
+        displayName: { type: string, minLength: 1, maxLength: 100 }
+        avatarUrl: { type: [string, 'null'], format: uri, maxLength: 500 }
+        roleCodes:
+          type: array
+          uniqueItems: true
+          maxItems: 20
+          items: { type: string }
+    UpdateUserRequest:
+      type: object
+      additionalProperties: false
+      required: [version]
+      minProperties: 2
+      properties:
+        email: { type: [string, 'null'], format: email, maxLength: 254 }
+        displayName: { type: string, minLength: 1, maxLength: 100 }
+        avatarUrl: { type: [string, 'null'], format: uri, maxLength: 500 }
+        version: { type: integer, format: int64, minimum: 0 }
+    ReplaceRolesRequest:
+      type: object
+      additionalProperties: false
+      required: [roleCodes, version]
+      properties:
+        roleCodes:
+          type: array
+          uniqueItems: true
+          maxItems: 20
+          items: { type: string }
+        version: { type: integer, format: int64, minimum: 0 }
+    SetEnabledRequest:
+      type: object
+      additionalProperties: false
+      required: [enabled, version]
+      properties:
+        enabled: { type: boolean }
+        version: { type: integer, format: int64, minimum: 0 }
+    FieldError:
+      type: object
+      additionalProperties: false
+      required: [field, message]
+      properties:
+        field: { type: string }
+        message: { type: string }
+    Problem:
+      type: object
+      additionalProperties: true
+      required: [type, title, status, code, msg, requestId, timestamp]
+      properties:
+        type: { type: string, format: uri-reference }
+        title: { type: string }
+        status: { type: integer, minimum: 400, maximum: 599 }
+        detail: { type: string }
+        instance: { type: string, format: uri-reference }
+        code: { type: string, pattern: '^[A-Z][A-Z0-9_]{2,63}$' }
+        msg: { type: string }
+        requestId: { type: string }
+        timestamp: { type: string, format: date-time }
+        errors:
+          type: array
+          items: { $ref: '#/components/schemas/FieldError' }
+security:
+  - bearerAuth: []
