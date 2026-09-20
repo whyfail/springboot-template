@@ -182,25 +182,6 @@
             </plugin>
 
             <plugin>
-                <groupId>com.rudikershaw.gitbuildhook</groupId>
-                <artifactId>git-build-hook-maven-plugin</artifactId>
-                <version>3.6.0</version>
-                <configuration>
-                    <gitConfig>
-                        <core.hooksPath>githooks</core.hooksPath>
-                    </gitConfig>
-                </configuration>
-                <executions>
-                    <execution>
-                        <!-- 任何 mvnw 调用（含 validate）都安装钩子 -->
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>configure</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <groupId>com.diffplug.spotless</groupId>
                 <artifactId>spotless-maven-plugin</artifactId>
                 <version>${spotless.version}</version>
@@ -358,8 +339,8 @@
             </activation>
             <build>
                 <plugins>
-            <plugin>
-                <groupId>com.rudikershaw.gitbuildhook</groupId>
+                <plugin>
+                    <groupId>com.rudikershaw.gitbuildhook</groupId>
                 <artifactId>git-build-hook-maven-plugin</artifactId>
                 <version>3.6.0</version>
                 <configuration>
