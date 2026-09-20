@@ -38,6 +38,10 @@
 - 响应成功结构不加统一 envelope；错误一律 Problem Details，顶层带 `code`、`msg`、`requestId`。
 - 分页契约：`items/page/size/totalElements/totalPages`，`page` 从 0 开始，`size` 最大 100。
 
+## 提交规范
+
+- 提交信息使用 Conventional Commits：`<类型>(<范围>)?: <描述>`，类型枚举与前端模板一致，标题行 ≤100 字符；`githooks/commit-msg` 钩子强制校验，CI 双重校验。
+
 ## 质量门禁
 
 - 提交前运行 `./mvnw clean verify`（Spotless 格式、Enforcer、单元 + Testcontainers 集成测试、JaCoCo 覆盖率、ArchUnit）。

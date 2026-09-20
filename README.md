@@ -58,6 +58,20 @@ cd ../my-backend
 
 生成的项目里，`{{ package }}` / `{{ name }}` 已被替换为你的 Java 包名与项目名，直接按下面步骤启动。
 
+## 提交规范
+
+仓库通过 `githooks/commit-msg` 强制 [Conventional Commits](https://www.conventionalcommits.org/)（与前端模板规则一致）。跑过任意一次 `./mvnw` 后钩子自动生效（Maven 通过 `core.hooksPath` 安装；需要项目已完成 `git init`）：
+
+```text
+<类型>(<范围>)?: <描述>
+
+feat: 添加新功能          fix(auth): 修复会话撤销
+docs: 更新文档            refactor(user): 抽取分页逻辑
+perf/test/build/ci/chore/types/style/revert/wip/release 同理
+```
+
+类型枚举与前端对齐：`feat|fix|docs|style|refactor|perf|test|build|ci|chore|types|wip|release`；标题行不超过 100 字符；破坏性变更用 `!` 标记。CI 会校验推送范围内的全部提交信息。
+
 ## 技术基线
 
 | 类别 | 选型 |

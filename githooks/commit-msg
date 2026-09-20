@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+# Conventional Commits 校验。规则与前端模板 scripts/verify-commit.js 对齐：
+# 类型枚举一致；标题行总长不超过 100 字符（用显式长度判断，locale 无关）。
+set -euo pipefail
+
+msg_file="${1:-}"
+[[ -f "$msg_file" ]] || exit 0
+
+first_line=$(head -n 1 "$msg_file" | tr -d '\r')
+
+# git merge / git revert 自动生成的提交豁免
+[[ "$first_line" =~ ^Merge\  ]] && exit 0
+
+pattern='^(revert: )?(feat|fix|docs|style|refactor|perf|test|build|ci|chore|types|wip|release)(\([A-Za-z0-9._/-]+\))?!?: .+'
+
+if ! [[ "$first_line" =~ $pattern ]]; then
+  cat >&2 <<'EOF'
+  ❌ 提交信息格式不正确
+
+  请使用 Conventional Commits 格式（与前端模板一致），以便自动生成更新日志：
+
+    feat: 添加新功能
+    fix: 修复认证模块中的 bug
+    docs: 更新文档
+    style: 代码格式化
+    refactor: 重构认证模块
+    perf: 性能优化
+    test: 添加单元测试
+    build: 更新依赖
+    ci: 配置 CI 流程
+    chore: 更新配置文件
+    types: 添加类型定义
+
+  也可带范围或破坏性变更标记：feat(auth)!: 迁移到新的会话模型
+
+  规则：类型(范围)?: 描述；标题行不超过 100 字符，描述不以句号结尾。
+  详细规范请参考：https://www.conventionalcommits.org/
+EOF
+  exit 1
+fi
+
+if [[ ${#first_line} -gt 100 ]]; then
+  echo "  ❌ 提交信息标题行超过 100 字符（当前 ${#first_line}），请精简描述" >&2
+  exit 1
+fi

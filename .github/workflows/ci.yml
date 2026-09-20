@@ -23,6 +23,20 @@ jobs:
           java-version: '25'
           cache: maven
 
+      - name: Validate commit messages
+        run: |
+          chmod +x githooks/commit-msg
+          if git rev-parse -q --verify origin/master >/dev/null; then
+            range=origin/master..HEAD
+          else
+            range=HEAD
+          fi
+          git log --format=%s "$range" | while IFS= read -r line; do
+            [ -z "$line" ] && continue
+            printf '%s\n' "$line" > /tmp/commit-msg
+            bash githooks/commit-msg /tmp/commit-msg
+          done
+
       - name: Generate a project from the template
         run: |
           ./scripts/generate.sh \
