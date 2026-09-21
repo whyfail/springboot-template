@@ -34,17 +34,17 @@
 
 一个专为 AI 协作编码设计的企业级 Spring Boot 后端模板。模板通过 `AGENTS.md`、`auth/user/authorization/audit/shared` 业务域分层、opaque token 会话和可验证质量门禁，把架构边界、安全约定和测试策略明确写进项目本身，为 `vite_react_init`、`vite_vue3_init`、`vite_react_ssr_init`、`vite_vue3_ssr_init` 四套前端提供登录、鉴权、用户角色管理与可观测性基础能力。
 
-> ⚠️ **本仓库是模板源码**：Java 包名与项目名使用 `{{ package }}` / `{{ name }}` 占位符（与前端模板的 `{{ name }}` 一致），**不能直接编译**。请先通过 [create-wl-app](https://www.npmjs.com/package/create-wl-app) 或 [`scripts/generate.sh`](scripts/generate.sh) 生成自己的项目，生成后即为可运行的完整工程。
+> ⚠️ **本仓库是模板源码**：Java 包名与项目名使用 `{{ package }}` / `{{ name }}` 占位符（与前端模板的 `{{ name }}` 一致），**不能直接编译**。请先通过 [cwa-stack](https://www.npmjs.com/package/cwa-stack) 或 [`scripts/generate.sh`](scripts/generate.sh) 生成自己的项目，生成后即为可运行的完整工程。
 
 HTTP 契约：[`openapi.yaml`](./openapi.yaml)（OpenAPI 3.1）。数据模型基线：`src/main/resources/db/migration/V1__init_iam.sql`。
 
 ## 生成项目
 
-**方式一：create-wl-app（推荐，与前端模板同一入口）**
+**方式一：cwa-stack（推荐，与前端模板同一入口）**
 
 ```bash
 # 管道符一行生成：模板名\n项目名\nJava包名\n项目描述（可选）
-echo -e "spring-boot\nmy-backend\ncom.mycompany.mybackend\n我的后端服务" | npx create-wl-app create
+echo -e "spring-boot\nmy-backend\ncom.mycompany.mybackend\n我的后端服务" | npx cwa-stack create
 ```
 
 **方式二：本仓库自带的生成脚本**
