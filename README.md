@@ -87,7 +87,7 @@ perf/test/build/ci/chore/types/style/revert/wip/release 同理
 | 测试 | JUnit、Mockito、AssertJ、Testcontainers（真实 MySQL/Redis）、ArchUnit |
 | 门禁 | Spotless、Maven Enforcer、JaCoCo（行 ≥80%/分支 ≥70%，核心域行 ≥90%） |
 
-版本原则：Spring 生态由 Boot BOM 管理；BOM 未管理的依赖仅 `springdoc-openapi 3.1.1`（Boot 4 兼容线）与 `archunit-junit5 1.5.0`（本机 JDK 25 支持线）。
+版本原则：Spring 生态由 Boot BOM 管理；BOM 未管理的依赖仅 `springdoc-openapi 3.1.1`（Boot 4 兼容线）与 `archunit-junit5 1.5.1`（本机 JDK 25 支持线）。
 
 ## 运行要求
 
