@@ -44,6 +44,7 @@
 
 ## 质量门禁
 
+- 维护含占位符的模板源码时，先用 `./scripts/generate.sh -n verify-run -p com.example.app -d ./generated` 生成项目，再在生成目录运行门禁；验证后删除生成目录。生成后的应用直接运行下列命令。
 - 提交前运行 `./mvnw clean verify`（Spotless 格式、Enforcer、单元 + Testcontainers 集成测试、JaCoCo 覆盖率、ArchUnit）。
 - 覆盖率门禁：全局行 ≥80% / 分支 ≥70%；`auth`/`user`/`authorization` 域行 ≥90%；`auth.application` 分支 ≥85%。禁止靠排除核心包、删除断言或降低阈值通过。
 - 测试稳定优先：时间用注入的 `Clock`，随机用 `TokenGenerator` 接口注入。

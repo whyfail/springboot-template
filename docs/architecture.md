@@ -21,7 +21,7 @@ flowchart LR
   API --> OTEL
 ```
 
-Spring Boot 4.1.1 模块化单体。代码按业务域组织，每个域内保留 api / application / domain / infrastructure 边界，后续可按负载拆分服务。
+Spring Boot 4.1.2 模块化单体。代码按业务域组织，每个域内保留 api / application / domain / infrastructure 边界，后续可按负载拆分服务。
 
 ## 包结构与依赖方向
 

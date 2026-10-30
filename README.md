@@ -77,17 +77,19 @@ perf/test/build/ci/chore/types/style/revert/wip/release 同理
 | 类别 | 选型 |
 | --- | --- |
 | Java | 25 LTS（Maven Enforcer 强制 `[25,26)`） |
-| 框架 | Spring Boot 4.1.1（Spring Framework 7 / Spring Security 7.1 / Hibernate 7） |
-| 构建 | Maven Wrapper 3.9.11（统一使用 `./mvnw`） |
+| 框架 | Spring Boot 4.1.2（Spring Framework 7 / Spring Security 7.1 / Hibernate 7） |
+| 构建 | Maven Wrapper 3.9.16（统一使用 `./mvnw`） |
 | Web | `spring-boot-starter-webmvc`（MVC + Tomcat，无 WebFlux） |
 | 数据 | MySQL 8.4 + Spring Data JPA + Flyway 12.4 |
 | 会话 | Redis（opaque token，只存 SHA-256 摘要） |
-| 文档 | springdoc-openapi 3.1.1（生产默认关闭 UI） |
+| 文档 | springdoc-openapi 3.2.0（生产默认关闭 UI） |
 | 可观测 | Actuator + Micrometer（Prometheus + OTLP tracing）+ 结构化 JSON 日志 |
 | 测试 | JUnit、Mockito、AssertJ、Testcontainers（真实 MySQL/Redis）、ArchUnit |
 | 门禁 | Spotless、Maven Enforcer、JaCoCo（行 ≥80%/分支 ≥70%，核心域行 ≥90%） |
 
-版本原则：Spring 生态由 Boot BOM 管理；BOM 未管理的依赖仅 `springdoc-openapi 3.1.1`（Boot 4 兼容线）与 `archunit-junit5 1.5.1`（本机 JDK 25 支持线）。
+版本原则：Spring 生态由 Boot BOM 管理；BOM 未管理的依赖仅 `springdoc-openapi 3.2.0`（Boot 4.1 兼容线）与 `archunit-junit5 1.5.1`（JDK 25 支持线）。
+
+[springdoc 3.2.0](https://github.com/springdoc/springdoc-openapi/releases/tag/v3.2.0) 基于 Spring Boot 4.1.2；运行时文档的 API 版本参数和部分模型必填属性推导有所调整，手写 `openapi.yaml` 契约不随依赖升级自动变化。格式与覆盖率门禁分别使用 Spotless 3.10.4、JaCoCo 0.8.16，Java 25 基线与覆盖率阈值保持不变。
 
 ## 运行要求
 
